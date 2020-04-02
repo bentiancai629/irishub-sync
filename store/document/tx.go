@@ -88,11 +88,11 @@ type Signer struct {
 }
 
 func (d CommonTx) Name() string {
-	return CollectionNmCommonTx
+	return CollectionNmCommonTx //tx_common
 }
 
 func (d CommonTx) PkKvPair() map[string]interface{} {
-	return bson.M{Tx_Field_Hash: d.TxHash}
+	return bson.M{Tx_Field_Hash: d.TxHash} //map[tx_hash]txHash
 }
 
 func (d CommonTx) Query(query, fields bson.M, sort []string, skip, limit int) (
