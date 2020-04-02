@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	Addrs    = "192.168.150.7:30000"
-	User     = "iris"
-	Passwd   = "irispassword"
+	Addrs    = "106.13.49.123:27017"
+	User     = ""
+	Passwd   = ""
 	Database = "sync-iris"
 )
 

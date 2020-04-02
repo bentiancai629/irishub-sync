@@ -10,16 +10,16 @@ import (
 )
 
 var (
-	BlockChainMonitorUrl = []string{"tcp://35.201.147.145:30657"}
+	BlockChainMonitorUrl = []string{"tcp://106.13.49.123:26657"}
 
 	WorkerNumCreateTask  = 1
-	WorkerNumExecuteTask = 60
+	WorkerNumExecuteTask = 3
 
-	InitConnectionNum  = 50              // fast init num of tendermint client pool
-	MaxConnectionNum   = 100             // max size of tendermint client pool
+	InitConnectionNum  = 5              // fast init num of tendermint client pool
+	MaxConnectionNum   = 10             // max size of tendermint client pool
 	SyncProposalStatus = "0 */1 * * * *" // every minute
 
-	Network = "testnet"
+	Network = "mainnet"
 )
 
 // get value of env var
