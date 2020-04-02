@@ -14,12 +14,16 @@ import (
 
 type CronService struct{}
 
+// 定式任务启动 24小时一次
 func (s *CronService) StartCronService() {
 
 	logger.Info("Start Update Txs CronService ...")
 	ticker := time.NewTicker(24 * time.Hour)
 	defer ticker.Stop()
+
+	// stop的信号通道
 	stop := make(chan os.Signal)
+	// 变量 = 通道 + 信号
 	signal.Notify(stop, os.Interrupt)
 
 	fnUpdate := func() {
@@ -29,6 +33,7 @@ func (s *CronService) StartCronService() {
 			}
 		}()
 
+		// 容错20次
 		runValue := true
 		skip := 0
 		for runValue {
@@ -62,6 +67,7 @@ func (s *CronService) StartCronService() {
 
 }
 
+// 更新未知或空的交易bypage
 func UpdateUnknownOrEmptyTypeTxsByPage(skip, limit int) (int, error) {
 
 	res, err := new(document.CommonTx).GetUnknownOrEmptyTypeTxs(skip, limit)

@@ -18,6 +18,7 @@ import (
 
 var session *mgo.Session
 
+// 返回可用session
 func Start() {
 	addrs := strings.Split(conf.Addrs, ",")
 	dialInfo := &mgo.DialInfo{
@@ -38,17 +39,20 @@ func Start() {
 	session.SetMode(mgo.PrimaryPreferred, true)
 }
 
+// 关闭session
 func Stop() {
 	logger.Info("release resource :mongoDb")
 	session.Close()
 }
 
+// copy session
 func getSession() *mgo.Session {
 	// max session num is 4096
 	return session.Clone()
 }
 
 // get collection object
+// copy session 执行后关闭
 func ExecCollection(collection string, s func(*mgo.Collection) error) error {
 	session := getSession()
 	defer session.Close()
@@ -63,9 +67,10 @@ func Find(collection string, query interface{}) *mgo.Query {
 	return c.Find(query)
 }
 
+// 保存之前查找主键PkKvPair
 func Save(h Docs) error {
 	save := func(c *mgo.Collection) error {
-		pk := h.PkKvPair()
+		pk := h.PkKvPair() // 返回主键 map[string]interface{}
 		n, _ := c.Find(pk).Count()
 		if n >= 1 {
 			errMsg := fmt.Sprintf("Record exists")
@@ -77,6 +82,7 @@ func Save(h Docs) error {
 	return ExecCollection(h.Name(), save)
 }
 
+// 批量插入
 func SaveAll(collectionName string, docs []interface{}) error {
 	session := getSession()
 	defer session.Close()
@@ -85,6 +91,7 @@ func SaveAll(collectionName string, docs []interface{}) error {
 	return c.Insert(docs...)
 }
 
+// 保存or更新记录
 func SaveOrUpdate(h Docs) error {
 	save := func(c *mgo.Collection) error {
 		n, err := c.Find(h.PkKvPair()).Count()
@@ -130,6 +137,7 @@ func Query(collectionName string, query bson.M, sort string, fields bson.M, skip
 
 // mgo transaction method
 // detail to see: https://godoc.org/gopkg.in/mgo.v2/txn
+// mgo事务存储
 func Txn(ops []txn.Op) error {
 	session := getSession()
 	defer session.Close()

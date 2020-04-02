@@ -116,22 +116,23 @@ func (d CommonTx) CalculateTxGasAndGasPrice(txType string, limit int) (
 	return d.Query(query, fields, sort, skip, limit)
 }
 
+//tx_common表里unknow和""的交易
 func (d CommonTx) GetUnknownOrEmptyTypeTxs(skip, limit int) (res []CommonTx, err error) {
 	q := bson.M{"$or": []bson.M{
-		{Tx_Field_Status: Unknow_Status},
-		{Tx_Field_Type: ""},
+		{Tx_Field_Status: Unknow_Status}, // status： unknow
+		{Tx_Field_Type: ""},  // type: ""
 	}}
 	sorts := []string{"-height"}
 	selector := bson.M{
-		Tx_Field_Hash:   1,
-		Tx_Field_Height: 1,
+		Tx_Field_Hash:   1, // tx_hash = 1
+		Tx_Field_Height: 1, // height =1
 	}
 
 	fn := func(c *mgo.Collection) error {
 		return c.Find(q).Select(selector).Sort(sorts...).Skip(skip).Limit(limit).All(&res)
 	}
 
-	err = store.ExecCollection(CollectionNmCommonTx, fn)
+	err = store.ExecCollection(CollectionNmCommonTx, fn)  // tx_common表
 	if err != nil {
 		return nil, err
 	}

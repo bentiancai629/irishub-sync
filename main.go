@@ -33,10 +33,10 @@ func main() {
 	go monitor.NewMonitor().Start()
 	//start databases service
 	logger.Info("Databases Service Start...")
-	store.Start()
+	store.Start() // 返回seesion赋值给全局 session *mgo.Session
 	//start sync task service
 	logger.Info("Irishub Sync Service Start...")
-	go new(cron.CronService).StartCronService()
+	go new(cron.CronService).StartCronService() // 定式任务启动 24小时一次 处理状态unknown和type=""的交易
 	engine.Start()
 	//paused until the signal have received
 	<-c

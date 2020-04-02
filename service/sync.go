@@ -21,12 +21,16 @@ func init() {
 	engine.AddTask(task.MakeSyncProposalStatusTask())
 }
 
+// 定时器
+// 执行任务
+// 初始化函数
 type SyncEngine struct {
 	cron      *cron.Cron  //cron
 	tasks     []task.Task // my timer task
 	initFuncs []func()    // module init fun
 }
 
+// 初始化时候的task
 func (engine *SyncEngine) AddTask(task task.Task) {
 	engine.tasks = append(engine.tasks, task)
 	engine.cron.AddFunc(task.GetCron(), task.GetCommand())
